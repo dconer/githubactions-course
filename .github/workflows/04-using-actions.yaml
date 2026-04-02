@@ -8,7 +8,6 @@ jobs:
       - uses: actions/setup-node@v6
       - name: install
         run: |
-          apt-get install patchelf
           pwd
           cd 04-using-actions/react-app
           npm install
@@ -21,5 +20,6 @@ jobs:
           rm -rf 04-using-actions
       - name: List final setup
         run: |
-          pwd
-          ls -alh
+          sudo apt-get update
+          sudo apt-get install -y tree
+          tree -Ld 2
