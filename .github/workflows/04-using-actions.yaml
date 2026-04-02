@@ -9,7 +9,7 @@ jobs:
       - name: install
         run: |
           pwd
-          cd 04-using-actions
+          cd 04-using-actions/react-app
           npm install
           ls -alh
       - name: Remove Unused files
