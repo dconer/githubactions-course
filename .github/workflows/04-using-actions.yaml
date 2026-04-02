@@ -1,0 +1,9 @@
+name: 04 - Using Actions
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Printing
+        run: ls -al
