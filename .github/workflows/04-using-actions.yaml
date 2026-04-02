@@ -14,6 +14,7 @@ jobs:
           ls -alh
       - name: Remove Unused files
         run: |
+          pwd
           cd ..
           rm -rf .git .github .gitignore README.md
           mv 04-using-actions/react-app .
