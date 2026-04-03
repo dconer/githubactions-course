@@ -26,7 +26,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploying to nonprod
-        if: success()
         run: echo "Deploying to nonprod..."
   e2e-tests:
     needs: deploy-nonprod
