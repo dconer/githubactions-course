@@ -6,6 +6,7 @@ on:
 jobs:
   echo-data:
     runs-on: ubuntu-latest
+    environment: bebe
     steps:
       - name: Display Information
         run: |
@@ -17,6 +18,5 @@ jobs:
           echo "Run ID: ${{ github.run_id }}"
           echo "Run number: ${{ github.run_number }}"
       - name: Retrieve Variable
-        environment: bebe
         run: |
           echo "Secret: ${{ vars.MY_VAR || 'not defined' }}"
