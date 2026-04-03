@@ -17,5 +17,6 @@ jobs:
           echo "Run ID: ${{ github.run_id }}"
           echo "Run number: ${{ github.run_number }}"
       - name: Retrieve Variable
+        env: bebe
         run: |
           echo "Secret: ${{ vars.MY_VAR || 'not defined' }}"
