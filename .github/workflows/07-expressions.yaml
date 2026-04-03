@@ -48,6 +48,12 @@ jobs:
         with:
           name: workflow-stats
           path: stats.csv
+      - name: get metadata
+        run: |
+          pwd
+          ls -al
+          cd react-app/
+          ls -al
 
       - name: Upload  build file
         uses: actions/upload-artifact@v4
