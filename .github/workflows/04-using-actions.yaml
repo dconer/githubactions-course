@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       build_id: ${{ steps.build_step.outputs.build_id }}
-      build_last: ${{ steps.build_step.outputs.build_step2 }}
+      build_last: ${{ steps.build_step2.outputs.build_id }}
     steps:
       - name: Build
         id: build_step
