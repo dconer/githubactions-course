@@ -1,48 +1,58 @@
-name: 10 - Controlling the Execution Flow
+name: Upload Stats Artifact
 
 on:
   workflow_dispatch:
-    inputs:
-      pass-unit-tests:
-        type: boolean
-        default: false
+  push:
 
 jobs:
-  lint-build:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Lint and build
-        run: echo "Linting and building project"
-  unit-tests:
-    continue-on-error: true
-    runs-on: ubuntu-latest
-    steps:
-      - name: Running unit tests
-        run: echo "Running tests..."
-      - name: Failing tests
-        if: ${{ inputs.pass-unit-tests == false}}
-        run: exit 1
-  deploy-nonprod:
-    needs: [lint-build, unit-tests]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploying to nonprod
-        run: echo "Deploying to nonprod..."
-  e2e-tests:
-    needs: deploy-nonprod
-    runs-on: ubuntu-latest
-    steps:
-      - name: Running E2E tests
-        run: echo "Running E2E tests"
-  load-tests:
-    needs: deploy-nonprod
-    runs-on: ubuntu-latest
-    steps:
-      - name: Running E2E tests
-        run: echo "Running E2E tests"
-  deploy-prod:
-    needs: [e2e-tests, load-tests]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploying to prod
-        run: echo "Deploying to prod..."
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: |
+          cd react-app
+          npm install
+
+      - name: Run tests
+        run: npm test --if-present
+        continue-on-error: true
+
+      - name: Build project
+        run: npm run build --if-present
+        continue-on-error: true
+
+      - name: Generate stats CSV
+        run: |
+          echo "metric,value" > stats.csv
+          echo "workflow,${{ github.workflow }}" >> stats.csv
+          echo "run_id,${{ github.run_id }}" >> stats.csv
+          echo "run_number,${{ github.run_number }}" >> stats.csv
+          echo "repository,${{ github.repository }}" >> stats.csv
+          echo "branch,${{ github.ref_name }}" >> stats.csv
+          echo "commit,${{ github.sha }}" >> stats.csv
+          echo "actor,${{ github.actor }}" >> stats.csv
+          echo "runner_os,${{ runner.os }}" >> stats.csv
+          echo "node_version,$(node -v)" >> stats.csv
+          echo "date,$(date -u)" >> stats.csv
+
+      - name: Upload stats artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-stats
+          path: stats.csv
+
+      - name: Upload  build file
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel
+          path: react-app/build
