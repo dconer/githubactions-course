@@ -22,10 +22,12 @@ jobs:
         if: ${{ inputs.pass-unit-tests == false}}
         run: exit 1
   deploy-nonprod:
+    continue-on-error: true
     needs: [lint-build, unit-tests]
     runs-on: ubuntu-latest
     steps:
       - name: Deploying to nonprod
+        if: success()
         run: echo "Deploying to nonprod..."
   e2e-tests:
     needs: deploy-nonprod
