@@ -1,27 +1,51 @@
-name: 07 - Using Expressions
-run-name: echo "07 - Using Expressions | DEBUG - ${{ inputs.debug && 'ON' || 'OFF' }}"
+name: 10 - Controlling the Execution Flow
 
 on:
-  push:
   workflow_dispatch:
     inputs:
-      debug:
-        required: false
+      pass-unit-tests:
         type: boolean
         default: false
 
 jobs:
-  build:
+  lint-build:
     runs-on: ubuntu-latest
     steps:
-      - name: "[debug] Print start-up data"
-        if: ${{ inputs.debug == true}}
-        run: |
-          echo "Triggered by: ${{ github.event_name }}"
-          echo "Branch: ${{ github.ref }}"
-          echo "Commit SHA: ${{ github.sha }}"
-      - name: "[debug] Print when triggered from main"
-        if: ${{ inputs.debug == true }}
-        run: echo "I was triggered from main"
-      - name: Greeting
-        run: echo "Hello, world"
+      - name: Lint and build
+        run: echo "Linting and building project"
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Running unit tests
+        run: echo "Running tests..."
+      - name: Failing tests
+        if: ${{ inputs.pass-unit-tests == false}}
+        run: exit 1
+  deploy-nonprod:
+    needs: [lint-build, unit-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploying to nonprod
+        if: success()
+        run: echo "Deploying to nonprod..."
+  e2e-tests:
+    needs: deploy-nonprod
+    runs-on: ubuntu-latest
+    steps:
+      - name: Running E2E tests
+        if: success()
+        run: echo "Running E2E tests"
+  load-tests:
+    needs: deploy-nonprod
+    runs-on: ubuntu-latest
+    steps:
+      - name: Running E2E tests
+        if: success()
+        run: echo "Running E2E tests"
+  deploy-prod:
+    needs: [e2e-tests, load-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploying to prod
+        if: success()
+        run: echo "Deploying to prod..."
