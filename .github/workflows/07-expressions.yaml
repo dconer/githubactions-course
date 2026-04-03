@@ -22,10 +22,12 @@ jobs:
           npm install
 
       - name: Run tests
+        working-directory: react-app
         run: npm test --if-present
         continue-on-error: true
 
       - name: Build project
+        working-directory: react-app
         run: npm run build --if-present
         continue-on-error: true
 
