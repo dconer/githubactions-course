@@ -1,25 +1,20 @@
-name: 04 - Using Actions
-on: push
+on:
+  workflow_dispatch:
+    inputs:
+      build_id:
+        required: true
+        type: string
+      deploy_target:
+        required: true
+        type: string
+      perform_deploy:
+        required: true
+        type: boolean
+
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+    if: ${{ inputs.perform_deploy }}
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-      - name: install
-        run: |
-          pwd
-          cd 04-using-actions/react-app
-          npm install
-          ls -alh
-      - name: Remove Unused files
-        run: |
-          pwd
-          rm -rf .git .github .gitignore README.md
-          mv 04-using-actions/react-app/* .
-          rm -rf 04-using-actions
-      - name: List final setup
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y tree
-          tree -L 2 -I 'node_modules'
+      - name: Deploy build to target
+        run: echo "Deploying build:${{ inputs.build_id }} to target:${{ inputs.deploy_target }}"
