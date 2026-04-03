@@ -1,20 +1,27 @@
-on:
-  workflow_dispatch:
-    inputs:
-      build_id:
-        required: true
-        type: string
-      deploy_target:
-        required: true
-        type: string
-      perform_deploy:
-        required: true
-        type: boolean
+name: Build and deploy
+on: push
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    if: ${{ inputs.perform_deploy }}
+    outputs:
+      build_id: ${{ steps.build_step.outputs.build_id }}
+      build_last: ${{ steps.build_step.outputs.build_step2 }}
     steps:
-      - name: Deploy build to target
-        run: echo "Deploying build:${{ inputs.build_id }} to target:${{ inputs.deploy_target }}"
+      - name: Build
+        id: build_step
+        run: echo "build_id=$RANDOM" >> $GITHUB_OUTPUT
+      - name: Testy
+        id: build_step2
+        run: echo "build_id=$RANDOM" >> $GITHUB_OUTPUT
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Deploying build ${{ needs.build.outputs.build_id }} and ${{ needs.build.outputs.build_last }}"
+  debug:
+    needs: [build, deploy]
+    runs-on: ubuntu-latest
+    if: ${{ failure() }}
+    steps:
+      - run: echo "Failed to build and deploy"
