@@ -30,18 +30,18 @@ jobs:
       - name: Deploying to nonprod
         run: echo "Deploying to nonprod..."
   e2e-tests:
+    if: failure()
     needs: deploy-nonprod
     runs-on: ubuntu-latest
     steps:
       - name: Running E2E tests
-        if: success()
         run: echo "Running E2E tests"
   load-tests:
+    if: failure()
     needs: deploy-nonprod
     runs-on: ubuntu-latest
     steps:
       - name: Running E2E tests
-        if: success()
         run: echo "Running E2E tests"
   deploy-prod:
     needs: [e2e-tests, load-tests]
