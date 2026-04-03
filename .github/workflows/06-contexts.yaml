@@ -11,7 +11,7 @@ jobs:
     environment: bebe
     env:
       MY_JOB_VAR: job
-      MY_OVERWRITTEN_VAR: job
+      MY_OVERWRITTEN_VAR: mami
     steps:
       - name: Display Information
         run: |
